@@ -20,7 +20,8 @@ app = FastAPI()
 # http://127.0.0.1:8000
 
 @app.get("/getRecomendacion/{titulo}")
-def recomendacion(movie_title, k=5):
+def recomendacion(movie_title):
+    k=5
     movie_index = df[df['title'] == movie_title].index[0]
     _, indices = knn_model.kneighbors(feature_matrix[movie_index], n_neighbors=k+1)
     recommended_movies = df.iloc[indices[0][1:]]['title'].tolist()
