@@ -19,16 +19,9 @@ app = FastAPI()
 
 # http://127.0.0.1:8000
 
-@app.get("/getRecomendacion/{titulo}")
-def recomendacion(movie_title):
-    k=5
-    movie_index = df[df['title'] == movie_title].index[0]
-    _, indices = knn_model.kneighbors(feature_matrix[movie_index], n_neighbors=k+1)
-    recommended_movies = df.iloc[indices[0][1:]]['title'].tolist()
-    return recommended_movies
 
-@app.get("/getIdioma/{idioma}")
-def buscar_peliculas_por_idioma(Idioma):
+@app.get("/getPeliculasIdioma/{idioma}")
+def peliculas_idioma(Idioma):
     # Filtrar el DataFrame por el idioma dado
     peliculas_filtradas = df[df['original_language'].apply(
         lambda x: pd.notna(x) and Idioma in x)]
@@ -39,24 +32,22 @@ def buscar_peliculas_por_idioma(Idioma):
 # print(buscar_peliculas_por_idioma('en'))
 
 
-@app.get("/getDatosPelicula/{nombre_pelicula}")
-def obtener_info_pelicula(nombre_pelicula):
+@app.get("/getPeliculasDuracion/{pelicula}")
+def peliculas_duracion(Pelicula):
     # Filtrar el DataFrame por el nombre de la película
-    filtro = df['title'] == nombre_pelicula
+    filtro = df['title'] == Pelicula
     resultado = df.loc[filtro, ['release_date', 'runtime']]
-
     # Obtener el año de estreno y la duración
     año_estreno = resultado['release_date'].values[0].split('-')[0]
     duracion = resultado['runtime'].values[0]
-
     # Retornar el año de estreno y la duración como diccionario
     return {'año_estreno': año_estreno, 'duracion': duracion}
 
 
-@app.get("/get_estadisticas_franquicia/{franquicia}")
-def obtener_estadisticas_franquicia(franquicia):
+@app.get("/getFranquicia/{franquicia}")
+def franquicia(Franquicia):
     # Filtrar el DataFrame por la franquicia dada
-    peliculas_franquicia = df[df['belongs_to_collection'] == franquicia]
+    peliculas_franquicia = df[df['belongs_to_collection'] == Franquicia]
     # Calcular el número de películas
     num_peliculas = len(peliculas_franquicia)
     # Calcular el monto total de revenue
@@ -67,21 +58,21 @@ def obtener_estadisticas_franquicia(franquicia):
     return {'numero_peliculas': num_peliculas, 'monto_total_revenue': monto_total_revenue, 'promedio_revenue': promedio_revenue}
 
 
-@app.get("/get_peliclas_pais/{pais}")
-def contar_peliculas_por_pais(pais):
+@app.get("/getPeliculasPais/{pais}")
+def peliculas_pais(Pais):
     # Filtrar el DataFrame por el país dado, excluyendo valores NaN
     peliculas_pais = df[df['production_countries'].apply(
-        lambda x: pd.notna(x) and pais in x)]
+        lambda x: pd.notna(x) and Pais in x)]
     # Contar la cantidad de películas
     cantidad_peliculas = len(peliculas_pais)
     return cantidad_peliculas
 
 
-@app.get("/get_estadisticas_productora/{productora}")
-def obtener_estadisticas_productora(productora):
+@app.get("/getProductorasExitosas/{productora}")
+def productoras_exitosas(Productora):
     # Filtrar el DataFrame por la productora dada
     peliculas_productora = df[df['production_companies'].apply(
-        lambda x: pd.notna(x) and productora in x)]
+        lambda x: pd.notna(x) and Productora in x)]
     # Contar el número de películas
     num_peliculas = len(peliculas_productora)
     # Calcular el revenue total
@@ -89,8 +80,8 @@ def obtener_estadisticas_productora(productora):
     return {'numero_peliculas': num_peliculas, 'revenue_total': revenue_total}
 
 
-@app.get("/get_estadisticas_director/{director}")
-def obtener_estadisticas_director(nombre_director):
+@app.get("/getDirector/{director}")
+def get_director(nombre_director):
     peliculas_director = df[df['director'].apply(
         lambda x: pd.notna(x) and nombre_director in x)]
     # Calcular la suma de returns
@@ -99,3 +90,12 @@ def obtener_estadisticas_director(nombre_director):
     peliculas = peliculas_director[[
         'title', 'release_date', 'return', 'budget', 'revenue']].values.tolist()
     return {'suma_returns': suma_returns, 'lista_datos_peliculas': peliculas}
+
+
+@app.get("/getRecomendacion/{titulo}")
+def recomendacion(titulo):
+    k=5
+    movie_index = df[df['title'] == titulo].index[0]
+    _, indices = knn_model.kneighbors(feature_matrix[movie_index], n_neighbors=k+1)
+    recommended_movies = df.iloc[indices[0][1:]]['title'].tolist()
+    return recommended_movies
