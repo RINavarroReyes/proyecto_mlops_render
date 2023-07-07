@@ -2,13 +2,29 @@ from fastapi import FastAPI
 from pydantic import BaseModel
 # import typing as tp
 import pandas as pd
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.neighbors import NearestNeighbors
+
 
 df = pd.read_csv('df_limpio.csv')
+
+df['combined_features'] = df['title'] + ' ' + df['genres'].fillna('')
+vectorizer = TfidfVectorizer()
+feature_matrix = vectorizer.fit_transform(df['combined_features'])
+knn_model = NearestNeighbors(metric='cosine', algorithm='brute')
+knn_model.fit(feature_matrix)
+
 
 app = FastAPI()
 
 # http://127.0.0.1:8000
 
+@app.get("/getRecomendacion/{titulo}")
+def recomendacion(movie_title, k=5):
+    movie_index = df[df['title'] == movie_title].index[0]
+    _, indices = knn_model.kneighbors(feature_matrix[movie_index], n_neighbors=k+1)
+    recommended_movies = df.iloc[indices[0][1:]]['title'].tolist()
+    return recommended_movies
 
 @app.get("/getIdioma/{idioma}")
 def buscar_peliculas_por_idioma(Idioma):
