@@ -1,5 +1,7 @@
 pandas
-numpy
 fastapi
 uvicorn
 scikit-learn
+seaborn
+wordcloud
+datetime

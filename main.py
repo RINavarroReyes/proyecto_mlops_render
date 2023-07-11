@@ -1,12 +1,12 @@
 from fastapi import FastAPI
-from pydantic import BaseModel
+#from pydantic import BaseModel
 # import typing as tp
 import pandas as pd
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.neighbors import NearestNeighbors
 
 
-df = pd.read_csv('df_limpio.csv')
+df = pd.read_csv('Dataset/df_limpio.csv')
 
 df['combined_features'] = df['title'] + ' ' + df['genres'].fillna('')
 vectorizer = TfidfVectorizer()
