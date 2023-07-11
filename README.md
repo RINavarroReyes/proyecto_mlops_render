@@ -34,6 +34,7 @@ Estos son los enlaces en los que se puede ver el material creado para la correct
 
 - Enlace del Deploy en Render: https://proyecto-mlops-ajn4.onrender.com/docs
 
-- Video en Youtube donde se explica todo el proyecto: 
+- Video en Youtube donde se explica todo el proyecto: https://youtu.be/Et24K-bFrnw
 
 NOTA: En el siguiente link se ponen los archivos credtis.csv y movies_dataset.csv los cual deberan ser descargados y puestos en la carpeta Dataset:
+https://drive.google.com/drive/folders/1NPj1FQTvDx0vY42gCOqDYbKyOkGWLqRb
